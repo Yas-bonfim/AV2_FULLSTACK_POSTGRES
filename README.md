@@ -48,13 +48,18 @@ project/
 ## ⚙️ Tecnologias usadas
 
 - Node.js
-- Express
-- MongoDB + Mongoose
-- JWT
-- Bcrypt
-- dotenv
-- Morgan
 
+- Express
+
+- PostgreSQL + Sequelize
+
+- JWT (JSON Web Token)
+
+- Bcrypt
+
+- dotenv
+
+- Morgan
 ---
 
 ## 🔧 Instalação
@@ -66,3 +71,37 @@ cd AV2_FullStack
 
 # Instale as dependências
 npm install
+```
+
+## 🔗 Configure o ambiente
+Crie um arquivo .env com as informações do seu banco PostgreSQL (Neon, Railway, Render, local ou outro):
+```bash
+DATABASE_URL=postgres://user:password@host:5432/database
+JWT_SECRET=sua_chave_secreta
+PORT=3000
+NODE_ENV=development
+
+```
+## 🚀 Executar localmente
+```bash
+npm run dev
+A API estará disponível em:
+http://localhost:3000
+
+```
+
+## 🗄️ Banco de Dados
+- O Sequelize faz a sincronização automática dos modelos e cria as tabelas na primeira execução.
+
+## 🔑 Autenticação
+Após login, você recebe um token JWT.
+```bash
+Authorization: Bearer SEU_TOKEN
+```
+
+Envie nas rotas protegidas no cabeçalho:
+
+## 🛠️ Scripts de teste
+Utilize os scripts em /requests/*.sh ou ferramentas como Postman, Insomnia, ou cURL para testar os endpoints.
+
+
