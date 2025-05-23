@@ -1,7 +1,7 @@
 # 🔐 API de Autenticação com JWT
 
 Este projeto é uma API RESTful desenvolvida com Node.js, Express e MongoDB. Ele implementa autenticação de usuários utilizando JWT (JSON Web Token), seguindo uma arquitetura em camadas.
-
+Link do video: https://youtu.be/MH5JygHlD6k
 ---
 
 ## 📌 Funcionalidades
