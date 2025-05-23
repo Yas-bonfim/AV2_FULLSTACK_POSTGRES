@@ -25,9 +25,7 @@ const register = async ({ name, email, password }) => {
       return { status: 409, data: { message: 'E-mail já registrado' } };
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({ name, email, password: hashedPassword });
+    const user = await User.create({ name, email, password });
 
     return {
       status: 201,
@@ -61,12 +59,14 @@ const login = async ({ email, password }) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return { status: 401, data: { message: 'Credenciais inválidas' } };
+      return { status: 401, data: { message: 'Credenciais inválidasA' } };
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
+    console.log('Comparando senhas:', password, user.password);
     if (!isMatch) {
-      return { status: 401, data: { message: 'Credenciais inválidas' } };
+      return { status: 401, data: { message: 'Credenciais inválidasB' } };
     }
 
     if (!process.env.JWT_SECRET) {
