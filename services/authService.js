@@ -7,7 +7,6 @@ const PASSWORD_MIN_LENGTH = 6;
 
 // Registro de novo usuário
 const register = async ({ name, email, password }) => {
-  console.log('Dados de login recebidos:', { email, password });
   if (!name || !email || !password) {
     return { status: 400, data: { message: 'Todos os campos são obrigatórios' } };
   }
@@ -21,19 +20,20 @@ const register = async ({ name, email, password }) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return { status: 409, data: { message: 'E-mail já registrado' } };
     }
 
-    const user = new User({ name, email, password }); // <-- sem hash aqui
-    await user.save();
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({ name, email, password: hashedPassword });
 
     return {
       status: 201,
       data: {
         message: 'Usuário criado com sucesso',
-        user: { id: user._id, name: user.name, email: user.email }
+        user: { id: user.id, name: user.name, email: user.email }
       }
     };
   } catch (err) {
@@ -50,7 +50,6 @@ const register = async ({ name, email, password }) => {
 
 // Login de usuário existente
 const login = async ({ email, password }) => {
-  
   if (!email || !password) {
     return { status: 400, data: { message: 'E-mail e senha são obrigatórios' } };
   }
@@ -60,13 +59,11 @@ const login = async ({ email, password }) => {
   }
 
   try {
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ where: { email } });
     if (!user) {
       return { status: 401, data: { message: 'Credenciais inválidas' } };
     }
-    //console.log('Senha fornecida para comparação:', password);
-    const match = await bcrypt.compare(password, user.password);
-    //console.log('Resultado da comparação de senha:', match);
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return { status: 401, data: { message: 'Credenciais inválidas' } };
@@ -77,7 +74,7 @@ const login = async ({ email, password }) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -88,21 +85,21 @@ const login = async ({ email, password }) => {
         message: 'Login realizado com sucesso',
         token,
         user: {
-          id: user._id,
+          id: user.id,
           name: user.name,
           email: user.email
         }
       }
     };
   } catch (err) {
-    console.error('🔥 Erro capturado no login:', err.name, err.message, err.stack); // ← esse log é essencial
-  return {
-    status: 500,
-    data: {
-      message: 'Erro no servidor ao fazer login',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    }
-  };
+    console.error('🔥 Erro capturado no login:', err.name, err.message, err.stack);
+    return {
+      status: 500,
+      data: {
+        message: 'Erro no servidor ao fazer login',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+      }
+    };
   }
 };
 

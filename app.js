@@ -24,6 +24,14 @@ app.use(morgan('combined', { stream: logger.stream }));
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
 
+app.use('/api/test', (req, res) => {
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: 'API is working',
+  });
+}
+);
+
 // Handler para rotas não encontradas (404)
 app.use((req, res, next) => {
   res.status(StatusCodes.NOT_FOUND).json({

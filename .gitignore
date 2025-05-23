@@ -52,3 +52,4 @@ pnpm-lock.yaml
 # Arquivos temporários
 *.tmp
 *.temp
+.vercel

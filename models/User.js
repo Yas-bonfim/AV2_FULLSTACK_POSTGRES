@@ -6,39 +6,51 @@ const User = sequelize.define('User', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notNull: { msg: 'O nome é obrigatório' },
+      notEmpty: { msg: 'O nome não pode ser vazio' },
+    },
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, // Email único
+    unique: {
+      msg: 'E-mail já está em uso',
+    },
     validate: {
-      isEmail: { msg: 'Email inválido' },
+      notNull: { msg: 'O e-mail é obrigatório' },
+      isEmail: { msg: 'E-mail inválido' },
     },
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      notNull: { msg: 'A senha é obrigatória' },
+      notEmpty: { msg: 'A senha não pode ser vazia' },
+      len: {
+        args: [6, 100],
+        msg: 'A senha deve ter no mínimo 6 caracteres',
+      },
+    },
   },
 }, {
   timestamps: true,
 
-  // Hooks para criptografar a senha antes de salvar
   hooks: {
     beforeCreate: async (user) => {
-      const hashedPassword = await bcrypt.hash(user.password, 10);
-      user.password = hashedPassword;
+      user.password = await bcrypt.hash(user.password, 10);
     },
     beforeUpdate: async (user) => {
       if (user.changed('password')) {
-        const hashedPassword = await bcrypt.hash(user.password, 10);
-        user.password = hashedPassword;
+        user.password = await bcrypt.hash(user.password, 10);
       }
     },
   },
 });
 
-// Função opcional para comparar senha no próprio model
-User.prototype.validPassword = async function(password) {
+// 🔐 Método de instância para comparar senhas
+User.prototype.isPasswordValid = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
 
