@@ -18,7 +18,7 @@ Link do video: https://youtu.be/MH5JygHlD6k
 ---
 
 ## 🗂️ Estrutura de pastas
-
+``` 
 project/ 
 │ 
 ├── app.js 
@@ -40,7 +40,7 @@ project/
 │ └── User.js 
 ├── database/ 
 │ └── mongo.js 
-
+```
 
 
 ---
